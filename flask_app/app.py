@@ -23,11 +23,14 @@ app = Flask(__name__)
 ALLOWED_EXTENSIONS = {'java'}
 UPLOAD_FOLDER = 'uploads'
 
+uploadedFile = ''
+
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/upload', methods = ['GET','POST'])
+@app.route('/', methods = ['GET','POST'])
 def hello():
+	global uploadedFile
 	if(request.method == 'POST'):
 		if('file' not in request.files):
 			return 'NO FILE'
@@ -58,8 +61,10 @@ def documentation():
 			file.save(os.path.join(UPLOAD_FOLDER, file.filename))
 			if(uploadedFile != ''):
 				neural_code_sum.starter(uploadedFile)
-				doc = os.path.dirname(os.path.realpath(__file__))+'/output.java'
+				doc = os.path.dirname(os.path.realpath(__file__))+'/'+ uploadedFile
+				print('hahaha',doc)
 				return send_file(doc,as_attachment=True,cache_timeout=0)
+				# return 'SUCCESS'
 
 # ------------------------------------------------------------------------------
 # Download Flask Server
@@ -68,7 +73,8 @@ def documentation():
 @app.route('/download', methods = ['GET'])
 def download_file():
 	global uploadedFile
-	doc = os.path.dirname(os.path.realpath(__file__))+'/output.java'
+	doc = os.path.dirname(os.path.realpath(__file__))+'/'+ uploadedFile
+	print('**!**',doc)
 	return send_file(doc,as_attachment=True,cache_timeout=0)
 
 
